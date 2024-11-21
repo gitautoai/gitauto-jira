@@ -1,0 +1,19 @@
+modules:
+  jira:issuePanel:
+    - key: gitauto-jira-hello-world-issue-panel
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: gitauto-jira
+      icon: https://developer.atlassian.com/platform/forge/images/icons/issue-panel-icon.svg
+  function:
+    - key: resolver
+      handler: index.handler
+resources:
+  - key: main
+    path: src/frontend/index.jsx
+app:
+  runtime:
+    name: nodejs20.x
+  id: ari:cloud:ecosystem::app/f434bcc5-834f-45e5-ba1d-62e2ee8952cd
