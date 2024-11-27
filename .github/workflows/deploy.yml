@@ -1,0 +1,52 @@
+name: Deploy Forge App to Jira
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4  # https://github.com/actions/checkout
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4  # https://github.com/actions/setup-node
+        with:
+          node-version: "20" # https://nodejs.org/en
+
+      # Install project dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Install Forge CLI
+      - name: Install Forge CLI
+        run: npm install -g @forge/cli
+
+      # Authenticate Forge CLI
+      # https://developer.atlassian.com/platform/forge/set-up-cicd/#step-2--define-your-login-details-as-variables
+      - name: Authenticate Forge CLI
+        run: forge login --email ${{ secrets.FORGE_EMAIL }} --token ${{ secrets.FORGE_API_TOKEN }}
+
+      # Enable Forge analytics
+      # https://developer.atlassian.com/platform/forge/set-up-cicd/#understanding-usage-analytics
+      - name: Enable Forge analytics
+        run: forge settings set usage-analytics true
+
+      # Run Forge lint
+      - name: Run Forge lint
+        run: forge lint --fix
+
+      # Deploy Forge App
+      # https://developer.atlassian.com/platform/forge/staging-and-production-apps/#deploy-to-a-specific-environment
+      - name: Deploy Forge App
+        run: forge deploy -e production
+
+      # Install Forge app dependencies
+      - name: Install Forge dependencies
+        run: forge install -e production
