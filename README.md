@@ -17,13 +17,14 @@ See [Set up Forge](https://developer.atlassian.com/platform/forge/set-up-forge/)
 - Build and deploy your app by running:
 
 ```shell
+forge lint --fix
 forge deploy
 ```
 
 - Install your app in an Atlassian site by running:
 
 ```shell
-forge install
+forge install --upgrade
 ```
 
 - Develop your app by running `forge tunnel` to proxy invocations locally:
