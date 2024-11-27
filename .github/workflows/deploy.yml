@@ -12,11 +12,11 @@ jobs:
     steps:
       # Checkout the repository
       - name: Checkout code
-        uses: actions/checkout@v4  # https://github.com/actions/checkout
+        uses: actions/checkout@v4 # https://github.com/actions/checkout
 
       # Set up Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v4  # https://github.com/actions/setup-node
+        uses: actions/setup-node@v4 # https://github.com/actions/setup-node
         with:
           node-version: "20" # https://nodejs.org/en
 
@@ -28,16 +28,16 @@ jobs:
       - name: Install Forge CLI
         run: npm install -g @forge/cli
 
+      # Enable Forge analytics
+      # https://developer.atlassian.com/platform/forge/set-up-cicd/#understanding-usage-analytics
+      - name: Enable Forge analytics
+        run: forge settings set usage-analytics true
+
       # Authenticate Forge CLI
       # https://developer.atlassian.com/platform/forge/cli-reference/login/
       # https://developer.atlassian.com/platform/forge/set-up-cicd/#step-2--define-your-login-details-as-variables
       - name: Authenticate Forge CLI
         run: forge login --email ${{ secrets.FORGE_EMAIL }} --token ${{ secrets.FORGE_API_TOKEN }} --non-interactive
-
-      # Enable Forge analytics
-      # https://developer.atlassian.com/platform/forge/set-up-cicd/#understanding-usage-analytics
-      - name: Enable Forge analytics
-        run: forge settings set usage-analytics true
 
       # Run Forge lint
       - name: Run Forge lint
