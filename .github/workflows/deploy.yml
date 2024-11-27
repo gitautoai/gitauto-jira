@@ -61,4 +61,4 @@ jobs:
       # https://developer.atlassian.com/platform/forge/cli-reference/install/
       - name: Install Forge dependencies
         if: github.event_name == 'pull_request'
-        run: forge install -e staging -s gitauto.atlassian.net --p Jira --upgrade --confirm-scopes --non-interactive --verbose 
+        run: forge install -e staging -s gitauto.atlassian.net -p Jira --upgrade --confirm-scopes --non-interactive --verbose 
