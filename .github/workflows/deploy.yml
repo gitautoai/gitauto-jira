@@ -48,8 +48,3 @@ jobs:
       # https://developer.atlassian.com/platform/forge/staging-and-production-apps/#deploy-to-a-specific-environment
       - name: Deploy Forge App
         run: forge deploy -e production
-
-      # Install Forge app dependencies
-      # https://developer.atlassian.com/platform/forge/cli-reference/install/
-      - name: Install Forge dependencies
-        run: forge install --upgrade -e production --non-interactive --product Jira --confirm-scopes --verbose 
