@@ -1,30 +1,31 @@
 import React, { useEffect, useState } from "react";
-import ForgeReconciler, { Text, useProductContext } from "@forge/react";
+import ForgeReconciler, { Select, Text, useProductContext } from "@forge/react";
 import { requestJira } from "@forge/bridge";
 
 const App = () => {
+  // Get Jira cloud ID (== workspace ID)
   const context = useProductContext();
-  const [comments, setComments] = useState();
-  console.log(`Number of comments on this issue: ${comments?.length}`);
-
-  const fetchCommentsForIssue = async (issueIdOrKey) => {
-    const res = await requestJira(`/rest/api/3/issue/${issueIdOrKey}/comment`);
-    const data = await res.json();
-    return data.comments;
-  };
-
-  // This is a test of the requestJira function
+  const [cloudId, setCloudId] = useState(null);
   useEffect(() => {
     if (context) {
-      const issueId = context.extension.issue.id;
-      fetchCommentsForIssue(issueId).then(setComments);
+      setCloudId(context.cloudId);
+      console.log({ context });
+      console.log(`Jira cloud ID: ${context.cloudId}`);
     }
   }, [context]);
 
+  // Get repository list where GitAuto is installed
+  const repositories = ["gitautoai/gitauto", "gitautoai/gitauto-jira"];
+  const [selectedRepo, setSelectedRepo] = useState(repositories[0]);
+
   return (
     <>
-      <Text>Hello world!</Text>
-      <Text>Number of comments on this issue: {comments?.length}</Text>
+      <Text>Target GitHub Repository:</Text>
+      <Select
+        value={selectedRepo}
+        onChange={setSelectedRepo}
+        options={repositories.map((repo) => ({ label: repo, value: repo }))}
+      />
     </>
   );
 };
