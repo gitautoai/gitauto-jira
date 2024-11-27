@@ -1,16 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import ForgeReconciler, { Text } from '@forge/react';
-import { invoke } from '@forge/bridge';
+import React, { useEffect, useState } from "react";
+import ForgeReconciler, { Text, useProductContext } from "@forge/react";
+import { requestJira } from "@forge/bridge";
 
 const App = () => {
-  const [data, setData] = useState(null);
+  const context = useProductContext();
+  const [comments, setComments] = useState();
+  console.log(`Number of comments on this issue: ${comments?.length}`);
+
+  const fetchCommentsForIssue = async (issueIdOrKey) => {
+    const res = await requestJira(`/rest/api/3/issue/${issueIdOrKey}/comment`);
+    const data = await res.json();
+    return data.comments;
+  };
+
+  // This is a test of the requestJira function
   useEffect(() => {
-    invoke('getText', { example: 'my-invoke-variable' }).then(setData);
-  }, []);
+    if (context) {
+      const issueId = context.extension.issue.id;
+      fetchCommentsForIssue(issueId).then(setComments);
+    }
+  }, [context]);
+
   return (
     <>
       <Text>Hello world!</Text>
-      <Text>{data ? data : 'Loading...'}</Text>
+      <Text>Number of comments on this issue: {comments?.length}</Text>
     </>
   );
 };
