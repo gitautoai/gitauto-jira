@@ -1,6 +1,9 @@
 name: Deploy Forge App to Jira
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
@@ -47,4 +50,15 @@ jobs:
       # Deploy Forge App
       # https://developer.atlassian.com/platform/forge/staging-and-production-apps/#deploy-to-a-specific-environment
       - name: Deploy Forge App
-        run: forge deploy -e production
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            forge deploy -e production
+          else
+            forge deploy -e staging
+          fi
+
+      # Install Forge app dependencies
+      # https://developer.atlassian.com/platform/forge/cli-reference/install/
+      - name: Install Forge dependencies
+        if: github.event_name == 'pull_request'
+        run: forge install -e staging -s gitauto.atlassian.net --p Jira --upgrade --confirm-scopes --non-interactive --verbose 
