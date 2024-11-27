@@ -29,9 +29,10 @@ jobs:
         run: npm install -g @forge/cli
 
       # Authenticate Forge CLI
+      # https://developer.atlassian.com/platform/forge/cli-reference/login/
       # https://developer.atlassian.com/platform/forge/set-up-cicd/#step-2--define-your-login-details-as-variables
       - name: Authenticate Forge CLI
-        run: forge login --email ${{ secrets.FORGE_EMAIL }} --token ${{ secrets.FORGE_API_TOKEN }}
+        run: forge login --email ${{ secrets.FORGE_EMAIL }} --token ${{ secrets.FORGE_API_TOKEN }} --non-interactive
 
       # Enable Forge analytics
       # https://developer.atlassian.com/platform/forge/set-up-cicd/#understanding-usage-analytics
