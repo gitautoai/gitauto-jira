@@ -5,6 +5,13 @@ on:
     branches:
       - main
 
+# Set Forge credentials
+# https://developer.atlassian.com/platform/forge/cli-reference/login/
+# https://developer.atlassian.com/platform/forge/set-up-cicd/#step-2--define-your-login-details-as-variables
+env:
+  FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
+  FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -32,12 +39,6 @@ jobs:
       # https://developer.atlassian.com/platform/forge/set-up-cicd/#understanding-usage-analytics
       - name: Enable Forge analytics
         run: forge settings set usage-analytics true
-
-      # Authenticate Forge CLI
-      # https://developer.atlassian.com/platform/forge/cli-reference/login/
-      # https://developer.atlassian.com/platform/forge/set-up-cicd/#step-2--define-your-login-details-as-variables
-      - name: Authenticate Forge CLI
-        run: forge login --email ${{ secrets.FORGE_EMAIL }} --token ${{ secrets.FORGE_API_TOKEN }} --non-interactive
 
       # Run Forge lint
       - name: Run Forge lint
