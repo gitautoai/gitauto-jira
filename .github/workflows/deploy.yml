@@ -50,5 +50,6 @@ jobs:
         run: forge deploy -e production
 
       # Install Forge app dependencies
+      # https://developer.atlassian.com/platform/forge/cli-reference/install/
       - name: Install Forge dependencies
-        run: forge install -e production
+        run: forge install -e production --non-interactive --product Jira
