@@ -5,7 +5,7 @@ modules:
       resolver:
         function: resolver
       render: native
-      title: gitauto-jira
+      title: GitAuto
       icon: https://developer.atlassian.com/platform/forge/images/icons/issue-panel-icon.svg
   function:
     - key: resolver
@@ -15,5 +15,8 @@ resources:
     path: src/frontend/index.jsx
 app:
   runtime:
-    name: nodejs20.x
+    name: nodejs20.x # Has to be 'sandbox', 'nodejs18.x', 'nodejs20.x'
   id: ari:cloud:ecosystem::app/f434bcc5-834f-45e5-ba1d-62e2ee8952cd
+permissions:
+  scopes:
+    - read:jira-work
