@@ -42,6 +42,12 @@ permissions:
         - https://dkrxtcbaqzrodvsagwwn.supabase.co
         - https://awegqusxzsmlgxaxyyrq.supabase.co
 
+modules:
+  jira:issueEvent:
+    - key: issue-created
+      events:
+        - avi:jira:created:issue
+    - key: issue-updated
 # https://developer.atlassian.com/platform/forge/manifest-reference/variables/
 environment:
   variables:
