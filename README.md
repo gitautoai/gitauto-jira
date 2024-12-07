@@ -19,6 +19,21 @@ See [Set up Forge](https://developer.atlassian.com/platform/forge/set-up-forge/)
 ```shell
 forge lint --fix
 forge deploy
+
+## Webhook Feature
+
+This app now supports listening to Jira issue webhook events, allowing it to respond in real-time to changes in Jira issues. This feature enables automated workflows, notifications, and enhanced interactivity for users.
+
+### Configuration
+
+1. **Webhook Subscription**: The app is configured to subscribe to Jira webhook events such as issue creation, updates, and deletions. This is set up in the `manifest.yml` file.
+
+2. **Event Handlers**: Event handlers are implemented in the `src/webhookHandlers.js` file. These handlers parse the event payloads and execute corresponding actions.
+
+3. **Permissions**: Ensure that the app has the necessary permissions by checking the `manifest.yml` file. The required scopes include `read:jira-work` and `manage:jira-webhook`.
+
+### Testing
+
 ```
 
 - Install your app in an Atlassian site by running:
