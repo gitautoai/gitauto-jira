@@ -57,8 +57,10 @@ jobs:
             forge deploy -e staging
           fi
 
-      # Install Forge app dependencies
+      # Install or upgrade Forge app
       # https://developer.atlassian.com/platform/forge/cli-reference/install/
-      - name: Install Forge dependencies
+      - name: Install/Upgrade Forge app
         if: github.event_name == 'pull_request'
-        run: forge install -e staging -s gitauto.atlassian.net -p Jira --upgrade --confirm-scopes --non-interactive --verbose 
+        run: |
+          forge install -e staging -s gitauto.atlassian.net -p Jira --confirm-scopes --non-interactive --verbose || \
+          forge install -e staging -s gitauto.atlassian.net -p Jira --upgrade --confirm-scopes --non-interactive --verbose

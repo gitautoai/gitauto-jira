@@ -1,4 +1,14 @@
 modules:
+  # The trigger module invokes a function or calls a remote backend when a product event, app lifecycle event, or data security policy event is fired.
+  # https://developer.atlassian.com/platform/forge/manifest-reference/modules/trigger/
+  # trigger:
+  #   - key: app-lifecycle-trigger
+  #     function: lifecycleHandler
+  #     events:
+  #       - installed # https://developer.atlassian.com/platform/forge/events-reference/life-cycle/
+  #       - uninstalled
+
+  # The jira module provides functionality for Jira products.
   jira:issuePanel:
     - key: gitauto-jira-hello-world-issue-panel
       resource: main
@@ -7,9 +17,12 @@ modules:
       render: native
       title: GitAuto
       icon: https://developer.atlassian.com/platform/forge/images/icons/issue-panel-icon.svg
+
+  # https://developer.atlassian.com/platform/forge/runtime-reference/forge-resolver/
   function:
     - key: resolver
       handler: index.handler
+
 resources:
   - key: main
     path: src/frontend/index.jsx
@@ -17,6 +30,20 @@ app:
   runtime:
     name: nodejs20.x # Has to be 'sandbox', 'nodejs18.x', 'nodejs20.x'
   id: ari:cloud:ecosystem::app/f434bcc5-834f-45e5-ba1d-62e2ee8952cd
+
+# Environment variables are not supported in the manifest.yml file.
+# https://developer.atlassian.com/platform/forge/manifest-reference/permissions/
 permissions:
   scopes:
     - read:jira-work
+  external:
+    fetch:
+      backend:
+        - https://dkrxtcbaqzrodvsagwwn.supabase.co
+        - https://awegqusxzsmlgxaxyyrq.supabase.co
+
+# https://developer.atlassian.com/platform/forge/manifest-reference/variables/
+environment:
+  variables:
+    - SUPABASE_URL
+    - SUPABASE_API_KEY
