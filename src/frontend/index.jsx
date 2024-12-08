@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from "react";
-import ForgeReconciler, { Select, Text, useProductContext } from "@forge/react";
 import { invoke } from "@forge/bridge";
+import ForgeReconciler, { Select, Text, useProductContext } from "@forge/react";
 
 const App = () => {
   // Get Jira cloud ID (== workspace ID)
   const context = useProductContext();
+  // console.log("context: ", context);
 
   // Get Jira cloud ID
   const [cloudId, setCloudId] = useState(null);
   useEffect(() => {
-    if (context) {
-      setCloudId(context.cloudId);
-      console.log({ context });
-      console.log(`Jira cloud ID: ${context.cloudId}`);
-    }
+    if (context) setCloudId(context.cloudId);
   }, [context]);
 
   // Get Jira project ID
@@ -22,18 +19,19 @@ const App = () => {
     if (context) setProjectId(context.extension.project.id);
   }, [context]);
 
+  // Get Jira issue ID
+  const [issueId, setIssueId] = useState(null);
+  useEffect(() => {
+    if (context) setIssueId(context.extension.issue.id);
+  }, [context]);
+
   // Get corresponding GitHub repositories from Supabase
   const [githubRepos, setGithubRepos] = useState([]);
   useEffect(() => {
     const fetchRepositories = async () => {
       if (cloudId && projectId) {
         try {
-          const response = await invoke("getGithubRepos", {
-            cloudId,
-            projectId,
-          });
-
-          // response will be an array of repositories from Supabase
+          const response = await invoke("getGithubRepos", { cloudId, projectId });
           setGithubRepos(
             response.map((repo) => `${repo.github_owner_name}/${repo.github_repo_name}`)
           );
@@ -47,16 +45,45 @@ const App = () => {
     fetchRepositories();
   }, [cloudId, projectId]);
 
-  // Get repository list where GitAuto is installed
-  const [selectedRepo, setSelectedRepo] = useState(githubRepos[0]);
+  // Handle selected repository
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedRepo, setSelectedRepo] = useState("");
+  useEffect(() => {
+    if (!cloudId || !projectId) return;
+    const loadSavedRepo = async () => {
+      setIsLoading(true);
+      try {
+        const savedRepo = await invoke("getStoredRepo", { cloudId, projectId, issueId });
+        setSelectedRepo(savedRepo || "");
+      } catch (error) {
+        console.error("Error loading saved repo:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadSavedRepo();
+  }, [cloudId, projectId, issueId]);
+
+  // Save repository when selected
+  const handleRepoChange = async (value) => {
+    setSelectedRepo(value);
+    if (!cloudId || !projectId) return;
+    try {
+      await invoke("storeRepo", { cloudId, projectId, issueId, value });
+    } catch (error) {
+      console.error("Error saving repo:", error);
+    }
+  };
 
   return (
     <>
       <Text>Target GitHub Repository:</Text>
       <Select
         value={selectedRepo}
-        onChange={setSelectedRepo}
+        onChange={handleRepoChange}
         options={githubRepos.map((repo) => ({ label: repo, value: repo }))}
+        isDisabled={isLoading}
+        placeholder="Select a repository"
       />
     </>
   );
