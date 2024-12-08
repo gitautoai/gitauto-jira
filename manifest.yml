@@ -35,6 +35,7 @@ app:
 # https://developer.atlassian.com/platform/forge/manifest-reference/permissions/
 permissions:
   scopes:
+    - storage:app
     - read:jira-work
   external:
     fetch:
