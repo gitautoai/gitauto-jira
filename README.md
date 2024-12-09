@@ -39,8 +39,8 @@ For development, you can do the following:
 
 ```shell
 forge variables list -e development
-forge variables set --encrypt SUPABASE_URL <value>
-forge variables set --encrypt SUPABASE_API_KEY <value>
+forge variables set --environment development --encrypt SUPABASE_URL <value>
+forge variables set --environment development --encrypt SUPABASE_API_KEY <value>
 ```
 
 For production, you have to do the following:

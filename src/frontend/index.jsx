@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { invoke } from "@forge/bridge";
-import ForgeReconciler, { Select, Text, useProductContext } from "@forge/react";
+import ForgeReconciler, { Select, Text, useProductContext, Checkbox, Stack } from "@forge/react";
 
 const App = () => {
   // Get Jira cloud ID (== workspace ID)
@@ -75,8 +75,26 @@ const App = () => {
     }
   };
 
+  // Handle checkbox
+  const [isChecked, setIsChecked] = useState(false);
+  const [isTriggering, setIsTriggering] = useState(false);
+  const handleCheckboxChange = async (event) => {
+    const checked = event.target.checked;
+    setIsChecked(checked);
+    if (!checked || !selectedRepo) return;
+    setIsTriggering(true);
+    try {
+      await invoke("triggerGitAuto", { cloudId, projectId, issueId, selectedRepo });
+    } catch (error) {
+      console.error("Error triggering GitAuto:", error);
+    } finally {
+      setIsTriggering(false);
+    }
+  };
+
   return (
-    <>
+    // https://developer.atlassian.com/platform/forge/ui-kit-2/stack/
+    <Stack space="space.075">
       <Text>Target GitHub Repository:</Text>
       <Select
         value={selectedRepo}
@@ -85,7 +103,14 @@ const App = () => {
         isDisabled={isLoading}
         placeholder="Select a repository"
       />
-    </>
+      <Checkbox
+        label="Trigger GitAuto to open a pull request"
+        onChange={handleCheckboxChange}
+        value={isChecked}
+        isDisabled={!selectedRepo || isTriggering}
+      />
+      {isTriggering && <Text>Triggering GitAuto...</Text>}
+    </Stack>
   );
 };
 

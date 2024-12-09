@@ -51,4 +51,26 @@ resolver.define("storeRepo", async ({ payload }) => {
   return await storage.set(key, value);
 });
 
+resolver.define("triggerGitAuto", async ({ payload }) => {
+  const { cloudId, projectId, issueId, selectedRepo } = payload;
+
+  // Determine the API endpoint based on environment
+  const endpoint = process.env.GITAUTO_URL + "/webhook";
+  console.log("Endpoint", endpoint);
+  const response = await forge.fetch(endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      cloudId,
+      projectId,
+      issueId,
+      repository: selectedRepo,
+    }),
+  });
+
+  if (!response.ok) throw new Error(`Failed to trigger GitAuto: ${response.status}`);
+
+  return await response.json();
+});
+
 export const handler = resolver.getDefinitions();
