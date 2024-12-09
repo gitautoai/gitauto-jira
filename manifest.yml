@@ -1,12 +1,17 @@
 modules:
-  # The trigger module invokes a function or calls a remote backend when a product event, app lifecycle event, or data security policy event is fired.
+  # Trigger is used to invoke a function when a Jira issue event is fired.
   # https://developer.atlassian.com/platform/forge/manifest-reference/modules/trigger/
   # trigger:
-  #   - key: app-lifecycle-trigger
-  #     function: lifecycleHandler
+  #   - key: issue-trigger
+  #     function: webhook
+  #     # https://developer.atlassian.com/platform/forge/events-reference/jira/#issue-events
   #     events:
-  #       - installed # https://developer.atlassian.com/platform/forge/events-reference/life-cycle/
-  #       - uninstalled
+  #       - avi:jira:created:issue
+  #       - avi:jira:updated:issue
+  #     filter:
+  #       ignoreSelf: true # Prevents infinite loops by ignoring self-generated events
+  #       # expression: event.issue.fields.issuetype.name == 'Bug' # Optional: example filter for bug issues only
+  #       onError: IGNORE_AND_LOG # Will invoke function and log errors
 
   # The jira module provides functionality for Jira products.
   jira:issuePanel:
@@ -22,6 +27,8 @@ modules:
   function:
     - key: resolver
       handler: index.handler
+    # - key: webhook
+    #   handler: webhook.handler
 
 resources:
   - key: main
@@ -33,6 +40,7 @@ app:
 
 # Environment variables are not supported in the manifest.yml file.
 # https://developer.atlassian.com/platform/forge/manifest-reference/permissions/
+# It takes a few hours to 1 day to update here: https://developer.atlassian.com/console/myapps/f434bcc5-834f-45e5-ba1d-62e2ee8952cd/manage/permissions
 permissions:
   scopes:
     - storage:app
@@ -42,9 +50,12 @@ permissions:
       backend:
         - https://dkrxtcbaqzrodvsagwwn.supabase.co
         - https://awegqusxzsmlgxaxyyrq.supabase.co
+        - https://5ze2tkqk7c27bpl5opy5sbilsi0vrdim.lambda-url.us-west-1.on.aws
+        - https://gitauto.ngrok.dev
 
 # https://developer.atlassian.com/platform/forge/manifest-reference/variables/
 environment:
   variables:
     - SUPABASE_URL
     - SUPABASE_API_KEY
+    - GITAUTO_URL
