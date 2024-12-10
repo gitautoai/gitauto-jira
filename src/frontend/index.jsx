@@ -20,9 +20,21 @@ const App = () => {
   }, [context]);
 
   // Get Jira issue ID
-  const [issueId, setIssueId] = useState(null);
+  const [issueDetails, setIssueDetails] = useState(null);
   useEffect(() => {
-    if (context) setIssueId(context.extension.issue.id);
+    const fetchIssueDetails = async () => {
+      if (!context?.extension?.issue?.id) return;
+      try {
+        const details = await invoke("getIssueDetails", {
+          issueId: context.extension.issue.id,
+        });
+        setIssueDetails(details);
+      } catch (error) {
+        console.error("Error fetching issue details:", error);
+      }
+    };
+
+    fetchIssueDetails();
   }, [context]);
 
   // Get corresponding GitHub repositories from Supabase
@@ -47,14 +59,18 @@ const App = () => {
 
   // Handle selected repository
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedRepo, setSelectedRepo] = useState("");
+  const [selectedRepo, setSelectedRepo] = useState({ label: "", value: "" });
   useEffect(() => {
     if (!cloudId || !projectId) return;
     const loadSavedRepo = async () => {
       setIsLoading(true);
       try {
-        const savedRepo = await invoke("getStoredRepo", { cloudId, projectId, issueId });
-        setSelectedRepo(savedRepo || "");
+        const savedRepo = await invoke("getStoredRepo", {
+          cloudId,
+          projectId,
+          issueId: issueDetails?.id,
+        });
+        setSelectedRepo(savedRepo || { label: "", value: "" });
       } catch (error) {
         console.error("Error loading saved repo:", error);
       } finally {
@@ -62,14 +78,14 @@ const App = () => {
       }
     };
     loadSavedRepo();
-  }, [cloudId, projectId, issueId]);
+  }, [cloudId, projectId, issueDetails]);
 
   // Save repository when selected
   const handleRepoChange = async (value) => {
     setSelectedRepo(value);
     if (!cloudId || !projectId) return;
     try {
-      await invoke("storeRepo", { cloudId, projectId, issueId, value });
+      await invoke("storeRepo", { cloudId, projectId, issueId: issueDetails?.id, value });
     } catch (error) {
       console.error("Error saving repo:", error);
     }
@@ -84,7 +100,24 @@ const App = () => {
     if (!checked || !selectedRepo) return;
     setIsTriggering(true);
     try {
-      await invoke("triggerGitAuto", { cloudId, projectId, issueId, selectedRepo });
+      const [ownerName, repoName] = selectedRepo.value.split("/");
+      const repoData = githubRepos.find(
+        (repo) => repo.github_owner_name === ownerName && repo.github_repo_name === repoName
+      );
+
+      await invoke("triggerGitAuto", {
+        cloudId,
+        projectId,
+        ...issueDetails,
+        owner: {
+          id: repoData?.github_owner_id,
+          name: ownerName,
+        },
+        repo: {
+          id: repoData?.github_repo_id,
+          name: repoName,
+        },
+      });
     } catch (error) {
       console.error("Error triggering GitAuto:", error);
     } finally {
@@ -99,7 +132,7 @@ const App = () => {
       <Select
         value={selectedRepo}
         onChange={handleRepoChange}
-        options={githubRepos.map((repo) => ({ label: repo, value: repo }))}
+        options={githubRepos.map((repo) => ({ label: repo, value: repo }))} // must be this format
         isDisabled={isLoading}
         placeholder="Select a repository"
       />
