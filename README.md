@@ -15,11 +15,16 @@ See [Set up Forge](https://developer.atlassian.com/platform/forge/set-up-forge/)
 In summary, you can run this command to deploy and install the app in the first terminal:
 
 ```shell
-forge lint --fix
-forge deploy
+forge lint --fix -e development
+forge deploy -e development
 forge install -e development -s gitauto.atlassian.net --upgrade --confirm-scopes --non-interactive
-forge tunnel
+forge tunnel -e development
 ```
+
+- See more about [forge lint](https://developer.atlassian.com/platform/forge/cli-reference/lint/)
+- See more about [forge deploy](https://developer.atlassian.com/platform/forge/cli-reference/deploy/)
+- See more about [forge install](https://developer.atlassian.com/platform/forge/cli-reference/install/)
+- See more about [forge tunnel](https://developer.atlassian.com/platform/forge/cli-reference/tunnel/)
 
 And run this command in the second terminal to see the logs in forge cloud. See [Forge logs](https://developer.atlassian.com/platform/forge/cli-reference/logs/) for more information.
 
