@@ -1,3 +1,16 @@
+# https://developer.atlassian.com/platform/forge/manifest-reference/#app
+app:
+  id: ari:cloud:ecosystem::app/f434bcc5-834f-45e5-ba1d-62e2ee8952cd
+  runtime:
+    name: nodejs20.x # https://developer.atlassian.com/platform/forge/manifest-reference/#runtime
+  licensing:
+    enabled: false # https://developer.atlassian.com/platform/marketplace/listing-forge-apps/#enabling-licensing-for-your-app
+
+# https://developer.atlassian.com/platform/forge/manifest-reference/resources/#resources
+resources:
+  - key: main
+    path: src/frontend/index.jsx
+
 modules:
   # Trigger is used to invoke a function when a Jira issue event is fired.
   # https://developer.atlassian.com/platform/forge/manifest-reference/modules/trigger/
@@ -26,22 +39,9 @@ modules:
     - key: webhook
       handler: webhook.handler
 
-# https://developer.atlassian.com/platform/forge/manifest-reference/resources/#resources
-resources:
-  - key: main
-    path: src/frontend/index.jsx
-
-# https://developer.atlassian.com/platform/forge/manifest-reference/#app
-app:
-  id: ari:cloud:ecosystem::app/f434bcc5-834f-45e5-ba1d-62e2ee8952cd
-  runtime:
-    name: nodejs20.x # https://developer.atlassian.com/platform/forge/manifest-reference/#runtime
-  # licensing:
-  #   enabled: true  # https://developer.atlassian.com/platform/marketplace/listing-forge-apps/#enabling-licensing-for-your-app
-
-  # Environment variables are not supported in "permissions" section.
-  # https://developer.atlassian.com/platform/forge/manifest-reference/permissions/
-  # It takes a few hours to 1 day to update here: https://developer.atlassian.com/console/myapps/f434bcc5-834f-45e5-ba1d-62e2ee8952cd/manage/permissions
+# Environment variables are not supported in "permissions" section.
+# https://developer.atlassian.com/platform/forge/manifest-reference/permissions/
+# It takes a few hours to 1 day to update here: https://developer.atlassian.com/console/myapps/f434bcc5-834f-45e5-ba1d-62e2ee8952cd/manage/permissions
 permissions:
   scopes:
     - storage:app
