@@ -1,17 +1,26 @@
+# https://developer.atlassian.com/platform/forge/manifest-reference/#app
+app:
+  id: ari:cloud:ecosystem::app/f434bcc5-834f-45e5-ba1d-62e2ee8952cd
+  runtime:
+    name: nodejs20.x # https://developer.atlassian.com/platform/forge/manifest-reference/#runtime
+  licensing:
+    enabled: false # https://developer.atlassian.com/platform/marketplace/listing-forge-apps/#enabling-licensing-for-your-app
+
+# https://developer.atlassian.com/platform/forge/manifest-reference/resources/#resources
+resources:
+  - key: main
+    path: src/frontend/index.jsx
+
 modules:
   # Trigger is used to invoke a function when a Jira issue event is fired.
   # https://developer.atlassian.com/platform/forge/manifest-reference/modules/trigger/
-  # trigger:
-  #   - key: issue-trigger
-  #     function: webhook
-  #     # https://developer.atlassian.com/platform/forge/events-reference/jira/#issue-events
-  #     events:
-  #       - avi:jira:created:issue
-  #       - avi:jira:updated:issue
-  #     filter:
-  #       ignoreSelf: true # Prevents infinite loops by ignoring self-generated events
-  #       # expression: event.issue.fields.issuetype.name == 'Bug' # Optional: example filter for bug issues only
-  #       onError: IGNORE_AND_LOG # Will invoke function and log errors
+  trigger:
+    - key: installation-trigger
+      function: webhook
+      events:
+        # https://developer.atlassian.com/platform/forge/events-reference/life-cycle/
+        - avi:forge:installed:app # Doesn't include un-installation
+        - avi:forge:upgraded:app
 
   # The jira module provides functionality for Jira products.
   jira:issuePanel:
@@ -27,18 +36,10 @@ modules:
   function:
     - key: resolver
       handler: index.handler
-    # - key: webhook
-    #   handler: webhook.handler
+    - key: webhook
+      handler: webhook.handler
 
-resources:
-  - key: main
-    path: src/frontend/index.jsx
-app:
-  runtime:
-    name: nodejs20.x # Has to be 'sandbox', 'nodejs18.x', 'nodejs20.x'
-  id: ari:cloud:ecosystem::app/f434bcc5-834f-45e5-ba1d-62e2ee8952cd
-
-# Environment variables are not supported in the manifest.yml file.
+# Environment variables are not supported in "permissions" section.
 # https://developer.atlassian.com/platform/forge/manifest-reference/permissions/
 # It takes a few hours to 1 day to update here: https://developer.atlassian.com/console/myapps/f434bcc5-834f-45e5-ba1d-62e2ee8952cd/manage/permissions
 permissions:
