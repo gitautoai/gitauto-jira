@@ -22,6 +22,11 @@ modules:
         - avi:forge:installed:app # Doesn't include un-installation
         - avi:forge:upgraded:app
 
+    - key: jira-webhook-trigger
+      function: webhook
+      events:
+        - jira:issue_created
+        - jira:issue_updated
   # The jira module provides functionality for Jira products.
   jira:issuePanel:
     - key: gitauto-jira-hello-world-issue-panel

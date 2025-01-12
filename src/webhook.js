@@ -1,6 +1,7 @@
 import forge, { route } from "@forge/api";
 
 export const handler = async (event, context) => {
+import { webTrigger } from "@forge/events";
   // https://developer.atlassian.com/platform/forge/events-reference/life-cycle/
   console.log("Installation event payload:", event);
   console.log("Context:", context);
@@ -60,6 +61,13 @@ export const handler = async (event, context) => {
   } else if (event.eventType === "avi:forge:upgraded:app") {
     console.log("App was upgraded!");
     // Handle upgrade logic here
+  else if (event.webhookEvent) {
+    console.log("Received a webhook event:", event.webhookEvent);
+    // Process the webhook event here
+    // Example: if (event.webhookEvent === "jira:issue_created") { ... }
+    return { status: 200, body: "Webhook event processed" };
+  }
+
   }
 
   return { status: 200, body: "Installation event processed" };
