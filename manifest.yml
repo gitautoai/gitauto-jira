@@ -10,6 +10,8 @@ app:
 resources:
   - key: main
     path: src/frontend/index.jsx
+  - key: icon
+    path: src/assets
 
 modules:
   # Trigger is used to invoke a function when a Jira issue event is fired.
@@ -22,7 +24,7 @@ modules:
         - avi:forge:installed:app # Doesn't include un-installation
         - avi:forge:upgraded:app
 
-  # The jira module provides functionality for Jira products.
+  # The jira module provides functionality for Jira products. https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-issue-panel/#jira-issue-panel
   jira:issuePanel:
     - key: gitauto-jira-hello-world-issue-panel
       resource: main
@@ -30,7 +32,7 @@ modules:
         function: resolver
       render: native
       title: GitAuto
-      icon: https://developer.atlassian.com/platform/forge/images/icons/issue-panel-icon.svg
+      icon: resource:icon;icon.png
 
   # https://developer.atlassian.com/platform/forge/runtime-reference/forge-resolver/
   function:
